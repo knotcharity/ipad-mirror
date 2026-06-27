@@ -36,7 +36,7 @@
           }
         }
       ],
-      "./plugins/withReplayKit"
+      "@bacons/apple-targets"
     ],
     "experiments": {
       "typedRoutes": true,

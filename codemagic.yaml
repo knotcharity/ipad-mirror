@@ -12,11 +12,6 @@ workflows:
       - name: Build unsigned IPA
         script: |
           npx expo prebuild --platform ios
-          node scripts/create-extension.js
-          node scripts/addextensiontarget.js
-          grep -n "SWIFT_VERSION" ios/ipadapp.xcodeproj/project.pbxproj || echo "SWIFT_VERSION not found"
-          python3 scripts/patchswift.py
-          grep -n "SWIFT_VERSION" ios/ipadapp.xcodeproj/project.pbxproj || echo "SWIFT_VERSION not found after patch"
           xcodebuild -workspace ios/ipadapp.xcworkspace -scheme ipadapp -configuration Release -archivePath /Users/builder/clone/build/ipadapp.xcarchive archive CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
           mkdir -p /Users/builder/clone/build/ipa/Payload
           cp -r /Users/builder/clone/build/ipadapp.xcarchive/Products/Applications/ipadapp.app /Users/builder/clone/build/ipa/Payload/
