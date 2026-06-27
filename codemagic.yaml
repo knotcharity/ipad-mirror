@@ -12,11 +12,10 @@ workflows:
       - name: Build unsigned IPA
         script: |
           npx expo prebuild --platform ios
-          xcodebuild -workspace ios/ipadapp.xcworkspace -scheme ipadapp -configuration Release -archivePath build/ipadapp.xcarchive archive CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
-          mkdir -p build/ipa
-          cd build/ipadapp.xcarchive/Products/Applications
-          mkdir Payload
-          cp -r ipadapp.app Payload
-          zip -r ../../../../ipa/ipadapp.ipa Payload
+          xcodebuild -workspace ios/ipadapp.xcworkspace -scheme ipadapp -configuration Release -archivePath $CM_BUILD_DIR/build/ipadapp.xcarchive archive CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+          mkdir -p $CM_BUILD_DIR/build/ipa/Payload
+          cp -r $CM_BUILD_DIR/build/ipadapp.xcarchive/Products/Applications/ipadapp.app $CM_BUILD_DIR/build/ipa/Payload/
+          cd $CM_BUILD_DIR/build/ipa
+          zip -r ipadapp.ipa Payload
     artifacts:
-      - build/ipa/*.ipa
+      - build/ipa/ipadapp.ipa
