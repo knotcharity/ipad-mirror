@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 
@@ -41,6 +41,7 @@ export default function Index() {
             quality: 0.5,
             base64: true,
             skipProcessing: true,
+            shutterSound: false,
           });
           if (photo?.base64) {
             wsRef.current.send('data:image/jpeg;base64,' + photo.base64);
