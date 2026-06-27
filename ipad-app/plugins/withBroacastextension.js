@@ -3,7 +3,8 @@ const fs = require('fs');
 const path = require('path');
 
 module.exports = function withBroadcastExtension(config) {
-  return withXcodeProject(config, async (config) => {
+  return withXcodeProject(config, (config) => {
+    const xcodeProject = config.modResults;
     const platformProjectRoot = config.modRequest.platformProjectRoot;
     const extensionName = 'BroadcastExtension';
     const extensionDir = path.join(platformProjectRoot, extensionName);
@@ -81,6 +82,43 @@ class SampleHandler: RPBroadcastSampleHandler {
 </plist>`;
 
     fs.writeFileSync(path.join(extensionDir, 'Info.plist'), infoPlist);
+
+    // Add extension target to Xcode project
+    const bundleId = 'com.ipadmirror.app.broadcast';
+    const extTarget = xcodeProject.addTarget(
+      extensionName,
+      'app_extension',
+      extensionName,
+      bundleId
+    );
+
+    xcodeProject.addBuildPhase(
+      [`${extensionName}/SampleHandler.swift`],
+      'PBXSourcesBuildPhase',
+      'Sources',
+      extTarget.uuid
+    );
+
+    xcodeProject.addBuildPhase(
+      [],
+      'PBXFrameworksBuildPhase',
+      'Frameworks',
+      extTarget.uuid
+    );
+
+    xcodeProject.addBuildPhase(
+      [],
+      'PBXResourcesBuildPhase',
+      'Resources',
+      extTarget.uuid
+    );
+
+    xcodeProject.addBuildSettings({
+      SWIFT_VERSION: '5.0',
+      TARGETED_DEVICE_FAMILY: '1,2',
+      IPHONEOS_DEPLOYMENT_TARGET: '14.0',
+      SKIP_INSTALL: 'NO',
+    }, extTarget.uuid);
 
     return config;
   });

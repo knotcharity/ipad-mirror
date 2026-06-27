@@ -36,7 +36,8 @@
           }
         }
       ],
-      "./plugins/withReplayKit"
+      "./plugins/withReplayKit",
+      "./plugins/withBroadcastExtension"
     ],
     "experiments": {
       "typedRoutes": true,
