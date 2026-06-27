@@ -13,7 +13,7 @@ workflows:
         script: |
           npx expo prebuild --platform ios
           xcodebuild -workspace ios/ipadapp.xcworkspace -scheme ipadapp -configuration Release -archivePath /Users/builder/clone/build/ipadapp.xcarchive archive CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
-          ls /Users/builder/clone/build/ipadapp.xcarchive/Products/Applications/ipadapp.app/PlugIns/ 2>/dev/null || echo "No PlugIns folder found"
+          find /Users/builder/clone/build/ipadapp.xcarchive -name "*.appex" 2>/dev/null
           mkdir -p /Users/builder/clone/build/ipa/Payload
           cp -r /Users/builder/clone/build/ipadapp.xcarchive/Products/Applications/ipadapp.app /Users/builder/clone/build/ipa/Payload/
           cd /Users/builder/clone/build/ipa
