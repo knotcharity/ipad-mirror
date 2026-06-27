@@ -19,25 +19,16 @@ project.addBuildPhase(
   target.uuid
 );
 
-project.addBuildPhase(
-  [],
-  'PBXFrameworksBuildPhase',
-  'Frameworks',
-  target.uuid
-);
+project.addBuildPhase([], 'PBXFrameworksBuildPhase', 'Frameworks', target.uuid);
+project.addBuildPhase([], 'PBXResourcesBuildPhase', 'Resources', target.uuid);
 
-project.addBuildPhase(
-  [],
-  'PBXResourcesBuildPhase',
-  'Resources',
-  target.uuid
-);
+// Set Swift version on all build configurations for this target
+const configList = project.pbxXCConfigurationList();
+const buildConfigs = project.pbxXCBuildConfigurationSection();
 
-// Set Swift version
-const configurations = project.pbxXCBuildConfigurationSection();
-for (const key in configurations) {
-  const config = configurations[key];
-  if (config.buildSettings && config._id === target.uuid) {
+for (const key in buildConfigs) {
+  const config = buildConfigs[key];
+  if (typeof config === 'object' && config.buildSettings) {
     config.buildSettings['SWIFT_VERSION'] = '5.0';
     config.buildSettings['TARGETED_DEVICE_FAMILY'] = '"1,2"';
     config.buildSettings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0';
@@ -45,4 +36,4 @@ for (const key in configurations) {
 }
 
 fs.writeFileSync(pbxPath, project.writeSync());
-console.log('Extension target added to Xcode project!');
+console.log('Extension target added!');
