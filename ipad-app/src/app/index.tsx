@@ -38,10 +38,11 @@ export default function Index() {
       if (cameraRef.current && wsRef.current?.readyState === WebSocket.OPEN) {
         try {
           const photo = await cameraRef.current.takePictureAsync({
-            quality: 0.9,
+            quality: 1,
             base64: true,
             skipProcessing: true,
             shutterSound: false,
+            imageType: 'jpg',
           });
           if (photo?.base64) {
             wsRef.current.send('data:image/jpeg;base64,' + photo.base64);
@@ -79,7 +80,12 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
-      <CameraView style={styles.camera} ref={cameraRef} facing="back" />
+      <CameraView
+        style={styles.camera}
+        ref={cameraRef}
+        facing="back"
+        pictureSize="3840x2160"
+      />
       <View style={styles.controls}>
         <Text style={styles.title}>iPad Mirror</Text>
         <Text style={[styles.status, { color: isConnected ? 'green' : 'red' }]}>
