@@ -19,22 +19,23 @@ app.get('/', function(req, res) {
 let ipadClient = null;
 
 wss.on('connection', function(ws) {
-    ws.on('message', function(data) {
-        if (typeof data === 'string') {
-            try {
-                const msg = JSON.parse(data);
-                if (msg.type === 'ipad-hello') {
-                    ipadClient = ws;
-                    console.log('[iPad Mirror] iPad identified!');
-                    return;
-                }
-            } catch(e) {}
-        }
+    console.log('[iPad Mirror] Someone connected!');
 
-        // Forward frames to all OBS clients (everyone except iPad)
+    ws.on('message', function(data, isBinary) {
+        const str = data.toString();
+        try {
+            const msg = JSON.parse(str);
+            if (msg.type === 'ipad-hello') {
+                ipadClient = ws;
+                console.log('[iPad Mirror] iPad identified!');
+                return;
+            }
+        } catch(e) {}
+
+        // Forward frames to OBS as the same type they arrived
         wss.clients.forEach(function(client) {
             if (client !== ipadClient && client.readyState === WebSocket.OPEN) {
-                client.send(data);
+                client.send(data, { binary: isBinary });
             }
         });
     });

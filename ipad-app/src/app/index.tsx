@@ -38,7 +38,7 @@ export default function Index() {
       if (cameraRef.current && wsRef.current?.readyState === WebSocket.OPEN) {
         try {
           const photo = await cameraRef.current.takePictureAsync({
-            quality: 0.5,
+            quality: 0.9,
             base64: true,
             skipProcessing: true,
             shutterSound: false,

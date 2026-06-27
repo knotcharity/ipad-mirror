@@ -5,27 +5,34 @@
     <style>
         * { margin: 0; padding: 0; }
         body { background: transparent; overflow: hidden; }
-        img { width: 100vw; height: 100vh; object-fit: contain; display: block; }
+        canvas { width: 100vw; height: 100vh; display: block; }
     </style>
 </head>
 <body>
-    <img id="screen" />
+    <canvas id="screen"></canvas>
     <script>
-        const img = document.getElementById('screen');
+        const canvas = document.getElementById('screen');
+        const ctx = canvas.getContext('2d');
         const ws = new WebSocket('ws://localhost:3000');
-
-        ws.binaryType = 'blob';
+        ws.binaryType = 'arraybuffer';
 
         ws.onopen = function() {
-            console.log('OBS page connected to server');
+            console.log('OBS connected to server');
         };
 
         ws.onmessage = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+            };
+
             if (typeof event.data === 'string') {
                 img.src = event.data;
             } else {
-                const url = URL.createObjectURL(event.data);
-                img.src = url;
+                const blob = new Blob([event.data], { type: 'image/jpeg' });
+                img.src = URL.createObjectURL(blob);
             }
         };
     </script>
