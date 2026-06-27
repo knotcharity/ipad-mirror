@@ -20,30 +20,23 @@ project.addBuildPhase(
 project.addBuildPhase([], 'PBXFrameworksBuildPhase', 'Frameworks', target.uuid);
 project.addBuildPhase([], 'PBXResourcesBuildPhase', 'Resources', target.uuid);
 
-// Get the config list UUID from the target we just created
-const nativeTargets = project.pbxNativeTargetSection();
-let configListUUID = null;
-for (const key in nativeTargets) {
-  const t = nativeTargets[key];
-  if (typeof t === 'object' && t.name === extName) {
-    configListUUID = t.buildConfigurationList;
-    break;
-  }
-}
-
-if (configListUUID) {
-  const configList = project.pbxXCConfigurationList()[configListUUID];
-  const buildConfigs = project.pbxXCBuildConfigurationSection();
-  configList.buildConfigurations.forEach(c => {
-    const config = buildConfigs[c.value];
-    if (config && config.buildSettings) {
-      config.buildSettings['SWIFT_VERSION'] = '5.0';
-      config.buildSettings['TARGETED_DEVICE_FAMILY'] = '"1,2"';
-      config.buildSettings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0';
-      config.buildSettings['PRODUCT_BUNDLE_IDENTIFIER'] = bundleId;
-    }
-  });
-}
-
+// Write the project file first
 fs.writeFileSync(pbxPath, project.writeSync());
-console.log('Extension target added!');
+
+// Now directly patch the file to set SWIFT_VERSION
+let content = fs.readFileSync(pbxPath, 'utf8');
+
+// Print what SWIFT_VERSION lines exist
+const lines = content.split('\n').filter(l => l.includes('SWIFT_VERSION'));
+console.log('SWIFT_VERSION lines before patch:', JSON.stringify(lines));
+
+// Replace empty SWIFT_VERSION with 5.0
+content = content.replace(/SWIFT_VERSION = "";/g, 'SWIFT_VERSION = 5.0;');
+content = content.replace(/SWIFT_VERSION = ;/g, 'SWIFT_VERSION = 5.0;');
+content = content.replace(/SWIFT_VERSION = \"\";/g, 'SWIFT_VERSION = 5.0;');
+
+const linesAfter = content.split('\n').filter(l => l.includes('SWIFT_VERSION'));
+console.log('SWIFT_VERSION lines after patch:', JSON.stringify(linesAfter));
+
+fs.writeFileSync(pbxPath, content);
+console.log('Extension target added and Swift version patched!');
