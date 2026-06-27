@@ -11,12 +11,10 @@ workflows:
         script: npm install
       - name: Build unsigned IPA
         script: |
-          npx expo prebuild --platform ios --no-install
+          npx expo prebuild --platform ios
           
-          # Create broadcast extension directory
           mkdir -p ios/BroadcastExtension
           
-          # Write SampleHandler.swift
           cat > ios/BroadcastExtension/SampleHandler.swift << 'EOF'
           import ReplayKit
           import Foundation
@@ -52,7 +50,6 @@ workflows:
           }
           EOF
           
-          # Write Info.plist for extension
           cat > ios/BroadcastExtension/Info.plist << 'EOF'
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
