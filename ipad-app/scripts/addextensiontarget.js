@@ -22,18 +22,19 @@ project.addBuildPhase(
 project.addBuildPhase([], 'PBXFrameworksBuildPhase', 'Frameworks', target.uuid);
 project.addBuildPhase([], 'PBXResourcesBuildPhase', 'Resources', target.uuid);
 
-// Set Swift version on all build configurations for this target
-const configList = project.pbxXCConfigurationList();
+// Only set Swift version on the BroadcastExtension target's config list
+const configListUUID = project.pbxNativeTarget(extName).buildConfigurationList;
+const configList = project.pbxXCConfigurationList()[configListUUID];
+const buildConfigUUIDs = configList.buildConfigurations.map(c => c.value);
 const buildConfigs = project.pbxXCBuildConfigurationSection();
 
-for (const key in buildConfigs) {
-  const config = buildConfigs[key];
-  if (typeof config === 'object' && config.buildSettings) {
-    config.buildSettings['SWIFT_VERSION'] = '5.0';
-    config.buildSettings['TARGETED_DEVICE_FAMILY'] = '"1,2"';
-    config.buildSettings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0';
+buildConfigUUIDs.forEach(uuid => {
+  if (buildConfigs[uuid] && buildConfigs[uuid].buildSettings) {
+    buildConfigs[uuid].buildSettings['SWIFT_VERSION'] = '5.0';
+    buildConfigs[uuid].buildSettings['TARGETED_DEVICE_FAMILY'] = '"1,2"';
+    buildConfigs[uuid].buildSettings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0';
   }
-}
+});
 
 fs.writeFileSync(pbxPath, project.writeSync());
 console.log('Extension target added!');
