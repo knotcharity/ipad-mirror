@@ -1,0 +1,22 @@
+workflows:
+  ios-build:
+    name: iPad Mirror iOS Build
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    working_directory: ipad-app
+    environment:
+      node: 18.17.0
+    scripts:
+      - name: Install dependencies
+        script: npm install
+      - name: Build unsigned IPA
+        script: |
+          npx expo prebuild --platform ios
+          xcodebuild -workspace ios/ipadapp.xcworkspace -scheme ipadapp -configuration Release -archivePath build/ipadapp.xcarchive archive CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+          mkdir -p build/ipa
+          cd build/ipadapp.xcarchive/Products/Applications
+          mkdir Payload
+          cp -r ipadapp.app Payload
+          zip -r ../../../../ipa/ipadapp.ipa Payload
+    artifacts:
+      - build/ipa/*.ipa
