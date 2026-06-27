@@ -5,13 +5,13 @@ workflows:
     max_build_duration: 60
     working_directory: ipad-app
     environment:
-      node: 20.17.0
+      node: 20.19.4
     scripts:
       - name: Install dependencies
         script: npm install
       - name: Build unsigned IPA
         script: |
-          npx expo prebuild --platform ios
+          npx expo prebuild --platform ios --no-install
           xcodebuild -workspace ios/ipadapp.xcworkspace -scheme ipadapp -configuration Release -archivePath /Users/builder/clone/build/ipadapp.xcarchive archive CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
           mkdir -p /Users/builder/clone/build/ipa/Payload
           cp -r /Users/builder/clone/build/ipadapp.xcarchive/Products/Applications/ipadapp.app /Users/builder/clone/build/ipa/Payload/
