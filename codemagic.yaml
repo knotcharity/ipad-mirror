@@ -17,6 +17,7 @@ workflows:
           xcodebuild -workspace ios/ipadapp.xcworkspace -scheme ipadapp -configuration Release -archivePath /Users/builder/clone/build/ipadapp.xcarchive archive CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
           mkdir -p /Users/builder/clone/build/ipa/Payload
           cp -r /Users/builder/clone/build/ipadapp.xcarchive/Products/Applications/ipadapp.app /Users/builder/clone/build/ipa/Payload/
+          cp -r /Users/builder/clone/build/ipadapp.xcarchive/Products/Applications/ipadapp.app/PlugIns /Users/builder/clone/build/ipa/Payload/ipadapp.app/ 2>/dev/null || true
           cd /Users/builder/clone/build/ipa
           zip -r ipadapp.ipa Payload
     artifacts:
