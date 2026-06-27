@@ -75,6 +75,6 @@ const infoPlist = `<?xml version="1.0" encoding="UTF-8"?>
 </dict>
 </plist>`;
 
-fs.writeFileSync(path.join(extensionDir, 'Info.plist'), infoPlist);
+fs.writeFileSync(path.join(extensionDir, 'BroadcastExtension-Info.plist'), infoPlist);
 
 console.log('BroadcastExtension files created!');
